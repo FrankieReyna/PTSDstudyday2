@@ -1,21 +1,3 @@
-#Basically just want it to take 2 images from foil and real. The two options will be randomly placed on the screen (Migh have to make foil)
-
-#Must check that foil # is matched with main #
-
-#Ask andrea and Ariel if we need photo transformations for this? Prob not as we want to show main image
-
-    #Particiapnt able to interact, and choose one of the images that they remember seeing 
-
-        #Partipant Answers Correclty! Yippee
-
-            #participant#, correct, mainImgName, mainImgPath, foilImgName, foilImgPath
-
-        #Partipant Answers incorreclty! GRRRR >:()
-
-            #participant, correct, mainImgName, mainImgPath, foilImgName, foilImgPath
-
-    #repeat above until all images are ran though
-
 from pathlib import Path
 import os
 from psychopy import visual, event, core
@@ -29,50 +11,82 @@ import datetime
 
 PRACMODE = False
 
-mainPath = Path(r"PracSource")
-foilPath = Path(r"PracFoil")
+#Need to ask ariel how we want to format input of images so we can stay consistent for both day1 and day2
 
+#give the name of the directory with all of the image directories
+
+mainPath = Path(r"newLFM2_images")
+
+#List which images are the main images by inputing the main image directory 
+
+mainimgdirs = ["Negative", "Negative2", "Neutral", "Neutral2"]
+
+#List which images are the foil images by inputing the foil image directory names
+
+foilimgdirs = ["Negative_foil", "Negative2_foil", "Neutral_foil", "Neutral2_foil"]
+
+#Where do we want to output results
 result_export_dir = "results"
 
 mainpres = []
 
+#How many breaks are in out study
 breaks = 1
 
-imgSize = (300, 300)
+#Image size presented
+imgSize = (600, 600)
 
-for imgp in os.listdir(mainPath):
-    img = Image.open(os.path.join(mainPath, imgp))
-    img = img.resize(imgSize)
-    mainpres.append([img, 1, imgp])
+#Normalizes and assigns images with proper identifiers
+for imgdir in mainimgdirs:
+    dirpath = os.path.join(mainPath, imgdir)
+    for imgp in os.listdir(dirpath):
+        if imgp != ".DS_Store":
+            img = Image.open(os.path.join(dirpath, imgp))
+            img = img.resize(imgSize)
+            mainpres.append([img, 1, imgp, imgdir])
 
-for imgp in os.listdir(foilPath):
-    img = Image.open(os.path.join(foilPath, imgp))
-    img = img.resize(imgSize)
-    mainpres.append([img, 9, imgp])
+#Same thing but with foil images
+for imgdir in foilimgdirs:
+    dirpath = os.path.join(mainPath, imgdir)
+    for imgp in os.listdir(dirpath):
+        if imgp != ".DS_Store":
+            img = Image.open(os.path.join(dirpath, imgp))
+            img = img.resize(imgSize)
+            mainpres.append([img, 9, imgp, imgdir])
 
+#Shuffle for randomness
 random.shuffle(mainpres)
-
+#initializes rsults data
 df = pd.DataFrame()
 
 correct = False
-
 c = Clock()
 
+#Get participant ID
 participant = {"Participant #": ""}
 pnum = psygui.DlgFromDict(participant)
 partnum = participant['Participant #']
 
-
+#Present instructions
 win = visual.Window(fullscr=True, units="pix", color="white")
 present_instruction(win, r"Ver2__PTSD_pilot_text\begininstr1.jpg")
 present_instruction(win, r"Ver2__PTSD_pilot_text\begininstr2.jpg")
 
 img_count = 0
 
+#Get previous presentation details
+cur_path = os.path.dirname(__name__)
+
+new_path = os.path.relpath(fr'..\day1\results\P{partnum}\day1pres', cur_path)
+day1pres = pd.read_csv(new_path)
+
+#Start presenting
 for imgpair in mainpres:
 
-    if img_count == len(mainpres) / (breaks + 1):
+    #Checks to see if we present break
+    if img_count == int(len(mainpres) / (breaks + 1)) == 0:
         present_instruction(win, r"Ver2__PTSD_pilot_text\break.jpg")
+        intcount = 0
 
     mainimg = imgpair[0]
     imgtype = imgpair[1]
@@ -81,10 +95,10 @@ for imgpair in mainpres:
     
 
     # Load the images
-    text = visual.TextStim(win, "Have you been presented this image before?", pos=(0, 400), color="black", font='arial')
+    text = visual.TextStim(win, "Have you been presented this image before?", pos=(0, 400), color="black", font='arial', height=50)
     image1 = visual.ImageStim(win, image=mainimg, pos=(0, 0))
-    text1 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial')
-    text2 = visual.TextStim(win, "No (9)", pos=(400, -400), color="black", font='arial')
+    text1 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial', height=35)
+    text2 = visual.TextStim(win, "No (9)", pos=(400, -400), color="black", font='arial', height=35)
 
     text.draw()
     image1.draw()
@@ -103,25 +117,28 @@ for imgpair in mainpres:
         
         rt = c.getTime()
 
+        #Buttons to quit
         if 'escape' in keys or 'close' in keys:
             core.quit()
 
-        if keys == '1' or keys == '9':  # User chooses the first image
+        if keys == '1' or keys == '9':  # User decides on image
             correct = f"{imgtype}" == keys[0]
+            #If yes ask intrusions
             if keys == '1':
 
-                text3 = visual.TextStim(win, "How many times have you thought about the image presented? (0 to 9)", pos=(0, 400), color="black", font='arial')
+                text3 = visual.TextStim(win, "How many times have you thought about the image presented? (0 to 9)", pos=(0, 400), color="black", font='arial',  height=50, wrapWidth=700)
                 text3.draw()
                 image1.draw()
                 win.flip()
 
+                #Wait for answer on intrusions
                 while True:
 
                     intrusionnum = event.waitKeys()[0]
 
                     if 'escape' in intrusionnum or 'close' in intrusionnum:
                         core.quit()
-                            
+                    #Try to take their response, if it isnt a number in range, except case and try again
                     try:
                         if int(intrusionnum) in range(1, 10):
                             intrusionnum = int(intrusionnum)
@@ -129,7 +146,7 @@ for imgpair in mainpres:
                     except:
                         text3.draw()
                         image1.draw()
-                        visual.TextStim(win, text="Please enter a value from 0-9", pos=(0, -400), color="red").draw()
+                        visual.TextStim(win, text="Please enter a value from 0-9", pos=(0, -400), color="red",  height=35).draw()
 
                         if(PRACMODE):
                             PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
@@ -138,17 +155,20 @@ for imgpair in mainpres:
                         win.flip()
         
             break
+        #They didnt give y or n answer, prompt and try again
         else:
-            visual.TextStim(win, text="Please enter a value of 1 (yes) or 9 (no)", pos=(0, -500), color="red").draw()
+            visual.TextStim(win, text="Please enter a value of 1 (yes) or 9 (no)", pos=(0, -400), color="red",  height=35).draw()
             text.draw()
             image1.draw()
             text1.draw()
             text2.draw()
             win.flip()
             
-    df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2], "resp":keys, "correct":correct,"rt":rt, "intrusions":intrusionnum
+    #Save image response
+    df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2], "imgdir":imgpair[3], "correct":correct,"rt":rt, "intrusions":intrusionnum
                                       ,"date" : datetime.datetime.now()}, index=[0])], ignore_index=True)
 
+#Save data
 ppath = os.path.join(result_export_dir, f"P{partnum}")
 print(ppath)
 
