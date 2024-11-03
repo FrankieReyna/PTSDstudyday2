@@ -36,6 +36,19 @@ breaks = 1
 #Image size presented
 imgSize = (600, 600)
 
+#Get participant ID
+participant = {"Participant #": ""}
+pnum = psygui.DlgFromDict(participant)
+partnum = participant['Participant #']
+
+#Get previous presentation details
+cur_path = os.path.dirname(__name__)
+
+new_path = os.path.relpath(fr'..\day1\results\P{partnum}\day1pres', cur_path)
+day1pres = pd.read_csv(new_path)
+
+
+
 #Normalizes and assigns images with proper identifiers
 for imgdir in mainimgdirs:
     dirpath = os.path.join(mainPath, imgdir)
@@ -43,7 +56,11 @@ for imgdir in mainimgdirs:
         if imgp != ".DS_Store":
             img = Image.open(os.path.join(dirpath, imgp))
             img = img.resize(imgSize)
-            mainpres.append([img, 1, imgp, imgdir])
+            imgp = os.path.splitext(imgp)[0]
+            row =  day1pres.loc[day1pres['name']==imgp][['val', 'pres']].values[0]
+            val = row[0]
+            pres = row[1]
+            mainpres.append([img, 1, imgp, val, pres])
 
 #Same thing but with foil images
 for imgdir in foilimgdirs:
@@ -52,7 +69,7 @@ for imgdir in foilimgdirs:
         if imgp != ".DS_Store":
             img = Image.open(os.path.join(dirpath, imgp))
             img = img.resize(imgSize)
-            mainpres.append([img, 9, imgp, imgdir])
+            mainpres.append([img, 9, imgp, "NA", "NA"])
 
 #Shuffle for randomness
 random.shuffle(mainpres)
@@ -62,23 +79,12 @@ df = pd.DataFrame()
 correct = False
 c = Clock()
 
-#Get participant ID
-participant = {"Participant #": ""}
-pnum = psygui.DlgFromDict(participant)
-partnum = participant['Participant #']
-
 #Present instructions
 win = visual.Window(fullscr=True, units="pix", color="white")
 present_instruction(win, r"Ver2__PTSD_pilot_text\begininstr1.jpg")
 present_instruction(win, r"Ver2__PTSD_pilot_text\begininstr2.jpg")
 
 img_count = 0
-
-#Get previous presentation details
-cur_path = os.path.dirname(__name__)
-
-new_path = os.path.relpath(fr'..\day1\results\P{partnum}\day1pres', cur_path)
-day1pres = pd.read_csv(new_path)
 
 #Start presenting
 for imgpair in mainpres:
@@ -165,7 +171,7 @@ for imgpair in mainpres:
             win.flip()
             
     #Save image response
-    df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2], "imgdir":imgpair[3], "correct":correct,"rt":rt, "intrusions":intrusionnum
+    df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2], "val":imgpair[3], "pres":imgpair[4], "correct":correct,"rt":rt, "intrusions":intrusionnum
                                       ,"date" : datetime.datetime.now()}, index=[0])], ignore_index=True)
 
 #Save data
