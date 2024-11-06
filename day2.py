@@ -9,6 +9,9 @@ from present import present_instruction
 import psychopy.gui as psygui
 import datetime
 
+#TODO: add instrusion and distress question to practice!
+#TODO: We also should add a final slide to indicate the end of the task
+
 def pres_img(win, mainimg, imgtype):
 
     c = Clock()
@@ -18,7 +21,7 @@ def pres_img(win, mainimg, imgtype):
     rt = 0
     intrusionnum = 0
 
-    text = visual.TextStim(win, "Do you recall being presented with this image the day before?", pos=(0, 400), color="black", font='arial', height=50)
+    text = visual.TextStim(win, "Do you recall being presented with this image the day before?", pos=(0, 400), color="black", font='arial', height=50, wrapWidth = 1200)
     image1 = visual.ImageStim(win, image=mainimg, pos=(0, 0))
     text1 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial', height=35)
     text2 = visual.TextStim(win, "No (9)", pos=(400, -400), color="black", font='arial', height=35)
