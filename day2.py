@@ -49,7 +49,6 @@ def pres_img(win, mainimg, imgtype):
             if keys == '1':
 
                 text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue? Please indicate the frequency from 1 (never) to 9 (all the time)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
-                pos=(0, -450), color="red", height=30, wrapWidth=1000).draw()
                 text3.draw()
                 image1.draw()
                 win.flip()
