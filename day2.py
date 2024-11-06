@@ -162,7 +162,7 @@ present_instruction(win, r"Ver2__PTSD_pilot_text\begininstr2.jpg")
 img_count = 0
 
 for img in os.listdir("pracsource"):
-    pres_img(img, 1) #"img" should be replaced with image path, "evil" a placeholder for image valence
+    pres_img(win, os.path.join("pracsource", img), 1) #"img" should be replaced with image path, "evil" a placeholder for image valence
 
 present_instruction(win, r"Ver2__PTSD_pilot_text\prac2.jpg") #r ignores slash; replace this with relative path
 
