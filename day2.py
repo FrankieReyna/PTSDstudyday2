@@ -18,7 +18,7 @@ def pres_img(win, mainimg, imgtype):
     rt = 0
     intrusionnum = 0
 
-    text = visual.TextStim(win, "Have you been presented this image before?", pos=(0, 400), color="black", font='arial', height=50)
+    text = visual.TextStim(win, "Do you recall being presented with this image the day before?", pos=(0, 400), color="black", font='arial', height=50)
     image1 = visual.ImageStim(win, image=mainimg, pos=(0, 0))
     text1 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial', height=35)
     text2 = visual.TextStim(win, "No (9)", pos=(400, -400), color="black", font='arial', height=35)
@@ -48,7 +48,8 @@ def pres_img(win, mainimg, imgtype):
             #If yes ask intrusions
             if keys == '1':
 
-                text3 = visual.TextStim(win, "How many times have you thought about the image presented? (0 to 9)", pos=(0, 400), color="black", font='arial',  height=50, wrapWidth=700)
+                text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue? Please indicate the frequency from 1 (never) to 9 (all the time)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
+                pos=(0, -450), color="red", height=30, wrapWidth=1000).draw()
                 text3.draw()
                 image1.draw()
                 win.flip()
@@ -68,7 +69,7 @@ def pres_img(win, mainimg, imgtype):
                     except:
                         text3.draw()
                         image1.draw()
-                        visual.TextStim(win, text="Please enter a value from 0-9", pos=(0, -400), color="red",  height=35).draw()
+                        visual.TextStim(win, text="Please enter a value to indicate frequency from 0-9", pos=(0, -400), color="red", height=35).draw()
 
                         if(PRACMODE):
                             PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
@@ -141,12 +142,13 @@ for imgdir in mainimgdirs:
             mainpres.append([img, 1, imgp, val, pres])
 
 #Same thing but with foil images
-for imgdir in foilimgdirs:
+for imgdir in foilimgdirs: #TODO 
     dirpath = os.path.join(mainPath, imgdir)
     for imgp in os.listdir(dirpath):
         if imgp != ".DS_Store":
             img = Image.open(os.path.join(dirpath, imgp))
             img = img.resize(imgSize)
+            val = imgdir[0:imgdir.index("_")] #TODO: If doesnt work ("negativ") play around with index
             mainpres.append([img, 9, imgp, "NA", "NA"])
 
 #Shuffle for randomness
