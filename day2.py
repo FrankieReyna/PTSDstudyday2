@@ -15,15 +15,15 @@ PRACMODE = False
 
 #give the name of the directory with all of the image directories
 
-mainPath = Path(r"newLFM2_images")
+mainPath = Path(r"day2")
 
 #List which images are the main images by inputing the main image directory 
 
-mainimgdirs = ["Negative", "Negative2", "Neutral", "Neutral2"]
+mainimgdirs = ["negative", "neutral"]
 
 #List which images are the foil images by inputing the foil image directory names
 
-foilimgdirs = ["Negative_foil", "Negative2_foil", "Neutral_foil", "Neutral2_foil"]
+foilimgdirs = ["negative_foil", "neutral_foil"]
 
 #Where do we want to output results
 result_export_dir = "results"
@@ -53,7 +53,7 @@ day1pres = pd.read_csv(new_path)
 for imgdir in mainimgdirs:
     dirpath = os.path.join(mainPath, imgdir)
     for imgp in os.listdir(dirpath):
-        if imgp != ".DS_Store":
+        if imgp != ".DS_Store": #this line filters out the DS_Store file
             img = Image.open(os.path.join(dirpath, imgp))
             img = img.resize(imgSize)
             imgp = os.path.splitext(imgp)[0]
