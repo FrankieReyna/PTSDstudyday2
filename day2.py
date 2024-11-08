@@ -11,6 +11,7 @@ import datetime
 
 #TODO: add instrusion and distress question to practice!
 #TODO: We also should add a final slide to indicate the end of the task
+#TODO: Even if they answer "no" to the recall question, they should still get all the questions following (intrusion and distress)
 
 def pres_img(win, mainimg, imgtype):
 
@@ -20,6 +21,7 @@ def pres_img(win, mainimg, imgtype):
     correct = 0
     rt = 0
     intrusionnum = 0
+    distressnum = 0 #new line for distressrating
 
     text = visual.TextStim(win, "Do you recall being presented with this image the day before?", pos=(0, 400), color="black", font='arial', height=50, wrapWidth = 1200)
     image1 = visual.ImageStim(win, image=mainimg, pos=(0, 0))
@@ -48,47 +50,76 @@ def pres_img(win, mainimg, imgtype):
 
         if keys == '1' or keys == '9':  # User decides on image
             correct = f"{imgtype}" == keys[0]
-            #If yes ask intrusions
-            if keys == '1':
+            
+            #if keys == '1': #deleted this line bc they need to get all three questions regardless of 1 or 9
 
-                text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue? Please indicate the frequency from 1 (never) to 9 (all the time)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
-                text3.draw()
-                image1.draw()
-                win.flip()
-
-                #Wait for answer on intrusions
-                while True:
-
-                    intrusionnum = event.waitKeys()[0]
-
-                    if 'escape' in intrusionnum or 'close' in intrusionnum:
-                        core.quit()
-                    #Try to take their response, if it isnt a number in range, except case and try again
-                    try:
-                        if int(intrusionnum) in range(1, 10):
-                            intrusionnum = int(intrusionnum)
-                            break
-                    except:
-                        text3.draw()
-                        image1.draw()
-                        visual.TextStim(win, text="Please enter a value to indicate frequency from 0-9", pos=(0, -400), color="red", height=35).draw()
-
-                        if(PRACMODE):
-                            PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
-                                            ,color="black", font='arial')
-                            PRACMODE.draw()
-                        win.flip()
-        
-            break
-        #They didnt give y or n answer, prompt and try again
-        else:
-            visual.TextStim(win, text="Please enter a value of 1 (yes) or 9 (no)", pos=(0, -400), color="red",  height=35).draw()
-            text.draw()
+            #intrusion question
+            text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue? Please indicate the frequency from 1 (never) to 9 (all the time)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
+            text3.draw()
             image1.draw()
-            text1.draw()
-            text2.draw()
             win.flip()
-    return correct, rt, intrusionnum
+
+            #Wait for answer on intrusions
+            while True:
+                intrusionnum = event.waitKeys()[0]
+
+                if 'escape' in intrusionnum or 'close' in intrusionnum:
+                    core.quit()
+                    #Try to take their response, if it isnt a number in range, except case and try again
+                try:
+                    if int(intrusionnum) in range(1, 10):
+                        intrusionnum = int(intrusionnum)
+                        break
+                except:
+                    text3.draw()
+                    image1.draw()                        
+                    visual.TextStim(win, text="Please enter a value to indicate frequency from 0-9", pos=(0, -400), color="red", height=35).draw()
+                    if(PRACMODE):
+                        PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
+                                        ,color="black", font='arial')
+                        PRACMODE.draw()
+                    win.flip()
+
+        #Add the distress rating question
+        text4 = visual.TextStim(win, "How distressing did you find the thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
+        text4.draw()
+        image1.draw()
+        win.flip()
+
+        #wait for answer on distress level
+        while True:
+            distressnum = event.waitKeys()[0]
+
+            if 'escape' in distressnum or 'close' in distressnum:
+                core.quit()
+
+            try: 
+                if int(distressnum) in range(1,10): 
+                    distressnum = int(distressnum)
+                    break
+
+            except:
+                text4.draw()
+                image1.draw()
+                visual.TextStim(win, text="Please enter a value to indicate distress level from 1-9", pos=(0, -400), color="red", height=35).draw()
+                if(PRACMODE):
+                    PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0), color="black", font='arial')
+                    PRACMODE.draw()
+                win.flip()
+            
+        #save results
+        #results['distress_rating'].append(distressnum) #throwing error here, idk why
+        
+        break
+        #They didnt give y or n answer, prompt and try again
+    else:
+        visual.TextStim(win, text="Please enter a value of 1 (yes) or 9 (no)", pos=(0, -400), color="red",  height=35).draw()
+        text.draw()
+        image1.draw()
+        text1.draw()
+        text2.draw()
+        win.flip()
+    return correct, rt, intrusionnum, distressnum
 
 PRACMODE = False
 
