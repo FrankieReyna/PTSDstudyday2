@@ -57,6 +57,8 @@ def pres_img(win, mainimg, imgtype):
             text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue? Please indicate the frequency from 1 (never) to 9 (all the time)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
             text3.draw()
             image1.draw()
+            text5 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height=35)
+            text6 = visual.TextStim(win, "All the time (9)", pos=(400, -400), color="red", font='arial', height=35)
             win.flip()
 
             #Wait for answer on intrusions
@@ -84,6 +86,8 @@ def pres_img(win, mainimg, imgtype):
         text4 = visual.TextStim(win, "How distressing did you find the thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
         text4.draw()
         image1.draw()
+        text7 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height=35)
+        text8 = visual.TextStim(win, "Extremely (9)", pos=(400, -400), color="red", font='arial', height=35)
         win.flip()
 
         #wait for answer on distress level
