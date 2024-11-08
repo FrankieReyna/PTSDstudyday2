@@ -54,7 +54,8 @@ def pres_img(win, mainimg, imgtype):
             #if keys == '1': #deleted this line bc they need to get all three questions regardless of 1 or 9
 
             #intrusion question
-            text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue? Please indicate the frequency from 1 (never) to 9 (all the time)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
+            text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue?", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
+            text9 = visual.TextStim(win, "Please indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)", pos=(0, 300), color="black", font='arial', height=50, wrapWidth=1000)
             text3.draw()
             image1.draw()
             text5 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height=35)
@@ -86,8 +87,9 @@ def pres_img(win, mainimg, imgtype):
         text4 = visual.TextStim(win, "How distressing did you find the thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
         text4.draw()
         image1.draw()
-        text7 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height=35)
-        text8 = visual.TextStim(win, "Extremely (9)", pos=(400, -400), color="red", font='arial', height=35)
+        text7 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height = 35)
+        text9 = visual.TextStim(win, "Moderately (5)", pos=(0, -400), color = "black", font = 'arial', height = 35)
+        text8 = visual.TextStim(win, "Extremely (9)", pos=(400, -400), color="red", font='arial', height = 35)
         win.flip()
 
         #wait for answer on distress level
