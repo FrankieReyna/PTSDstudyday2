@@ -6,6 +6,7 @@ import random
 import pandas as pd
 from psychopy.clock import Clock
 from present import present_instruction
+from psychopy.visual.slider import Slider
 import psychopy.gui as psygui
 import datetime
 
@@ -13,33 +14,46 @@ import datetime
 #TODO: We also should add a final slide to indicate the end of the task
 #TODO: Even if they answer "no" to the recall question, they should still get all the questions following (intrusion and distress)
 
+
+PRACMODE = False
+
+spos = (0, -300)
+theight = 35
+
+
 def pres_img(win, mainimg, imgtype):
 
     c = Clock()
-
 
     correct = 0
     rt = 0
     intrusionnum = 0
     distressnum = 0 #new line for distressrating
 
-    text = visual.TextStim(win, "Do you recall being presented with this image the day before?", pos=(0, 400), color="black", font='arial', height=50, wrapWidth = 1200)
-    image1 = visual.ImageStim(win, image=mainimg, pos=(0, 0))
-    text1 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial', height=35)
-    text2 = visual.TextStim(win, "No (9)", pos=(400, -400), color="black", font='arial', height=35)
+    text1 = visual.TextStim(win, "Do you recall being presented with this image the day before?"
+                            , pos=(0, 400), color="black", font='arial', height=theight, wrapWidth = 1200)
+    image = visual.ImageStim(win, image=mainimg, pos=(0, 0))
+    text2 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial', height=theight)
+    text3 = visual.TextStim(win, "No (9)", pos=(400, -400), color="black", font='arial', height=theight)
 
-    text.draw()
-    image1.draw()
-    text1.draw()
-    text2.draw()
-    win.flip()
+    disp = [image, text1, text2, text3]
 
+    if(PRACMODE):
+        disp.append(visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
+                                ,color="black", font='arial'))
+    
     # Wait for user response
     c.reset()
     
     while True:
 
+        for display in disp:
+            display.draw()
+        
+        win.flip()
+
         intrusionnum = "0"
+        distressnum = "0"
         keys = event.waitKeys()[0]
         
         rt = c.getTime()
@@ -49,86 +63,126 @@ def pres_img(win, mainimg, imgtype):
             core.quit()
 
         if keys == '1' or keys == '9':  # User decides on image
+            #Get if correct or not
             correct = f"{imgtype}" == keys[0]
+            #How many times have they thought of image
+            intrusionnum = intrusion_num(win, mainimg)
+            #how distressing they think image is
+            distressnum = distress_num(win, mainimg)
+
+            break
+        else:
+            disp.append(visual.TextStim(win, text="Please enter a value of 1 (yes) or 9 (no)"
+                            , pos=(0, -500), color="red",  height=theight, wrapWidth = 1200))
             
-            #if keys == '1': #deleted this line bc they need to get all three questions regardless of 1 or 9
-
-            #intrusion question
-            text3 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue?", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
-            text9 = visual.TextStim(win, "Please indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)", pos=(0, 300), color="black", font='arial', height=50, wrapWidth=1000)
-            text3.draw()
-            image1.draw()
-            text5 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height=35)
-            text6 = visual.TextStim(win, "All the time (9)", pos=(400, -400), color="red", font='arial', height=35)
-            win.flip()
-
-            #Wait for answer on intrusions
-            while True:
-                intrusionnum = event.waitKeys()[0]
-
-                if 'escape' in intrusionnum or 'close' in intrusionnum:
-                    core.quit()
-                    #Try to take their response, if it isnt a number in range, except case and try again
-                try:
-                    if int(intrusionnum) in range(1, 10):
-                        intrusionnum = int(intrusionnum)
-                        break
-                except:
-                    text3.draw()
-                    image1.draw()                        
-                    visual.TextStim(win, text="Please enter a value to indicate frequency from 0-9", pos=(0, -400), color="red", height=35).draw()
-                    if(PRACMODE):
-                        PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
-                                        ,color="black", font='arial')
-                        PRACMODE.draw()
-                    win.flip()
-
-        #Add the distress rating question
-        text4 = visual.TextStim(win, "How distressing did you find the thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)", pos=(0, 400), color="black", font='arial', height=50, wrapWidth=1200)
-        text4.draw()
-        image1.draw()
-        text7 = visual.TextStim(win, "Not at all (1)", pos=(-400, -400), color="black", font='arial', height = 35)
-        text9 = visual.TextStim(win, "Moderately (5)", pos=(0, -400), color = "black", font = 'arial', height = 35)
-        text8 = visual.TextStim(win, "Extremely (9)", pos=(400, -400), color="red", font='arial', height = 35)
-        win.flip()
-
-        #wait for answer on distress level
-        while True:
-            distressnum = event.waitKeys()[0]
-
-            if 'escape' in distressnum or 'close' in distressnum:
-                core.quit()
-
-            try: 
-                if int(distressnum) in range(1,10): 
-                    distressnum = int(distressnum)
-                    break
-
-            except:
-                text4.draw()
-                image1.draw()
-                visual.TextStim(win, text="Please enter a value to indicate distress level from 1-9", pos=(0, -400), color="red", height=35).draw()
-                if(PRACMODE):
-                    PRACMODE = visual.TextStim(win, text="PRACMODE", pos=(-800, 0), color="black", font='arial')
-                    PRACMODE.draw()
-                win.flip()
-            
-        #save results
-        #results['distress_rating'].append(distressnum) #throwing error here, idk why
-        
-        break
-        #They didnt give y or n answer, prompt and try again
-    else:
-        visual.TextStim(win, text="Please enter a value of 1 (yes) or 9 (no)", pos=(0, -400), color="red",  height=35).draw()
-        text.draw()
-        image1.draw()
-        text1.draw()
-        text2.draw()
-        win.flip()
     return correct, rt, intrusionnum, distressnum
 
-PRACMODE = False
+def intrusion_num(win, mainimg):
+    #if keys == '1': #deleted this line bc they need to get all three questions regardless of 1 or 9
+    #intrusion question
+    text1 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue?\nPlease indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)"
+                            , pos=(0, 400), color="black", font='arial', height=theight, wrapWidth=1200)
+    # text2 = visual.TextStim(win, "Please indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)"
+    #                         , pos=(0, 300), color="black", font='arial', height=theight, wrapWidth=1000)
 
+    label = [f"{x}" for x in range(1, 10)]
+    label[0] = "1\n(Never)"
+    label[4] = "5\n(Sometimes)"
+    label[8] = "9\n(Non-stop)"
+
+    vas = Slider(win,
+                ticks=range(1, 10),
+                labels=label,
+                granularity=0.1,
+                color='black',
+                size=(900, 70), 
+                pos=spos,
+                borderColor='black',
+                style="slider"
+                )
+
+    image = visual.ImageStim(win, image=mainimg, pos=(0, 0))
+
+    disp = [image, text1, vas]
+
+    if(PRACMODE):
+        disp.append(visual.TextStim(win, text="PRACMODE", pos=(-800, 0)
+                                ,color="black", font='arial'))
+
+    #Wait for answer on intrusions
+    while True:
+
+        for display in disp:
+            print(disp, display)
+            display.draw()
+        
+        win.flip()
+            
+        intrusionnum = event.waitKeys()[0]
+
+        if 'escape' in intrusionnum or 'close' in intrusionnum:
+            core.quit()
+            #Try to take their response, if it isnt a number in range, except case and try again
+        try:
+            if int(intrusionnum) in range(1, 10):
+                intrusionnum = int(intrusionnum)
+                break
+        except:
+            disp.append(visual.TextStim(win, text="Please enter a value to indicate frequency from 0-9"
+                                        , pos=(0, -500), color="red", height=theight,wrapWidth = 1200))
+    return intrusionnum     
+
+def distress_num(win, mainimg):
+    #Add the distress rating question
+    text1 = visual.TextStim(win, "How distressing did you find the thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)"
+                            , pos=(0, 400), color="black", font='arial', height=theight, wrapWidth=1200)
+    image = visual.ImageStim(win, image=mainimg, pos=(0, 0))
+
+    label = [f"{x}" for x in range(1, 10)]
+    label[0] = "1\n(No distress)"
+    label[4] = "5\n(Some distress)"
+    label[8] = "9\n(Extreme distress)"
+
+    vas = Slider(win,
+                ticks=range(1, 10),
+                labels=label,
+                granularity=0.1,
+                color='black',
+                size=(900, 60), 
+                pos=spos,
+                borderColor='black',
+                style="slider"
+                )
+
+    disp = [image, text1, vas]
+
+    
+    if(PRACMODE):
+        disp.append(visual.TextStim(win, text="PRACMODE", pos=(-800, 0), color="black", font='arial'))
+
+    #wait for answer on distress level
+    while True:
+
+        for display in disp:
+            display.draw()
+        
+        win.flip()
+
+        distressnum = event.waitKeys()[0]
+
+        if 'escape' in distressnum or 'close' in distressnum:
+            core.quit()
+
+        try: 
+            if int(distressnum) in range(1,10): 
+                distressnum = int(distressnum)
+                break
+
+        except:
+            disp.append(visual.TextStim(win, text="Please enter a value to indicate distress level from 1-9"
+                                        , pos=(0, -500), color="red", height=theight,wrapWidth = 1200))
+    return distressnum
+                             
 #Need to ask ariel how we want to format input of images so we can stay consistent for both day1 and day2
 
 #give the name of the directory with all of the image directories
@@ -152,7 +206,7 @@ mainpres = []
 breaks = 1
 
 #Image size presented
-imgSize = (600, 600)
+imgSize = (500, 500)
 
 #Get participant ID
 participant = {"Participant #": ""}
@@ -163,9 +217,8 @@ partnum = participant['Participant #']
 cur_path = os.path.dirname(__name__)
 
 new_path = os.path.relpath(fr'..\PTSDstudyday1\results\P{partnum}\day1pres', cur_path)
+
 day1pres = pd.read_csv(new_path)
-
-
 
 #Normalizes and assigns images with proper identifiers
 for imgdir in mainimgdirs:
@@ -219,14 +272,12 @@ for imgpair in mainpres:
     imgtype = imgpair[1]
 
     # Set up the window
-    
-    correct, rt, intrusionnum = pres_img(win, mainimg, imgtype)
+    #Load and pres image    
+    correct, rt, intrusionnum, distressnum = pres_img(win, mainimg, imgtype)
 
-    # Load the images
-  
     #Save image response
     df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2], "val":imgpair[3], "pres":imgpair[4], "correct":correct,"rt":rt, "intrusions":intrusionnum
-                                      ,"date" : datetime.datetime.now()}, index=[0])], ignore_index=True)
+                                      ,"distress":distressnum,"date" : datetime.datetime.now()}, index=[0])], ignore_index=True)
 
 #Save data
 ppath = os.path.join(result_export_dir, f"P{partnum}")
@@ -237,7 +288,6 @@ if not os.path.exists(ppath):
 
 if(not PRACMODE):
     df.to_csv(os.path.join(ppath, "day2"))
-
 
 # Clean up
 win.close()
