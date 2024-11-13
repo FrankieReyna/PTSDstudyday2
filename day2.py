@@ -11,7 +11,6 @@ import psychopy.gui as psygui
 import datetime
 
 #TODO: add instrusion and distress question to practice!
-#TODO: We also should add a final slide to indicate the end of the task
 #TODO: Even if they answer "no" to the recall question, they should still get all the questions following (intrusion and distress)
 
 
@@ -30,7 +29,7 @@ def pres_img(win, mainimg, imgtype):
     intrusionnum = 0
     distressnum = 0 #new line for distressrating
 
-    text1 = visual.TextStim(win, "Do you recall being presented with this image the day before?"
+    text1 = visual.TextStim(win, "Do you recall seeing this image during yesterday's task?"
                             , pos=(0, 400), color="black", font='arial', height=theight, wrapWidth = 1200)
     image = visual.ImageStim(win, image=mainimg, pos=(0, 0))
     text2 = visual.TextStim(win, "Yes (1)", pos=(-400, -400), color="black", font='arial', height=theight)
@@ -80,7 +79,7 @@ def pres_img(win, mainimg, imgtype):
 def intrusion_num(win, mainimg):
     #if keys == '1': #deleted this line bc they need to get all three questions regardless of 1 or 9
     #intrusion question
-    text1 = visual.TextStim(win, "In the past 24 hours, how frequently did you think of this image out of the blue?\nPlease indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)"
+    text1 = visual.TextStim(win, "In the past 24 hours, how frequently did the thought of this image pop into your mind out of the blue?\nPlease indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)"
                             , pos=(0, 400), color="black", font='arial', height=theight, wrapWidth=1200)
     # text2 = visual.TextStim(win, "Please indicate the frequency. You can choose any number between 1 (never) to 9 (all the time)"
     #                         , pos=(0, 300), color="black", font='arial', height=theight, wrapWidth=1000)
@@ -88,7 +87,7 @@ def intrusion_num(win, mainimg):
     label = [f"{x}" for x in range(1, 10)]
     label[0] = "1\n(Never)"
     label[4] = "5\n(Sometimes)"
-    label[8] = "9\n(Non-stop)"
+    label[8] = "9\n(Extremely frequent)"
 
     vas = Slider(win,
                 ticks=range(1, 10),
@@ -128,20 +127,20 @@ def intrusion_num(win, mainimg):
                 intrusionnum = int(intrusionnum)
                 break
         except:
-            disp.append(visual.TextStim(win, text="Please enter a value to indicate frequency from 0-9"
+            disp.append(visual.TextStim(win, text="Please enter a value to indicate frequency from 1-9" #changed this to say 1-9 instead of 0
                                         , pos=(0, -500), color="red", height=theight,wrapWidth = 1200))
     return intrusionnum     
 
 def distress_num(win, mainimg):
     #Add the distress rating question
-    text1 = visual.TextStim(win, "How distressing did you find the thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)"
+    text1 = visual.TextStim(win, "How distressing did YOU find the sudden thoughts of this image? Please rate from 1 (not at all distressing) to 9 (extremely distressing)"
                             , pos=(0, 400), color="black", font='arial', height=theight, wrapWidth=1200)
     image = visual.ImageStim(win, image=mainimg, pos=(0, 0))
 
     label = [f"{x}" for x in range(1, 10)]
     label[0] = "1\n(No distress)"
     label[4] = "5\n(Some distress)"
-    label[8] = "9\n(Extreme distress)"
+    label[8] = "9\n(Extremely distressing)"
 
     vas = Slider(win,
                 ticks=range(1, 10),
