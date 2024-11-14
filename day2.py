@@ -58,7 +58,7 @@ def pres_img(win, mainimg, imgtype):
         rt = c.getTime()
 
         #Buttons to quit
-        if 'escape' in keys or 'close' in keys:
+        if 'close' in keys:
             core.quit()
 
         if keys == '1' or keys == '9':  # User decides on image
@@ -119,7 +119,7 @@ def intrusion_num(win, mainimg):
             
         intrusionnum = event.waitKeys()[0]
 
-        if 'escape' in intrusionnum or 'close' in intrusionnum:
+        if 'close' in intrusionnum:
             core.quit()
             #Try to take their response, if it isnt a number in range, except case and try again
         try:
@@ -169,7 +169,7 @@ def distress_num(win, mainimg):
 
         distressnum = event.waitKeys()[0]
 
-        if 'escape' in distressnum or 'close' in distressnum:
+        if 'close' in distressnum:
             core.quit()
 
         try: 
