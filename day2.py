@@ -288,6 +288,10 @@ if not os.path.exists(ppath):
 if(not PRACMODE):
     df.to_csv(os.path.join(ppath, "day2"))
 
+
+present_instruction(win, r"Ver2__PTSD_pilot_text\endexp.jpg")
+
+
 # Clean up
 win.close()
 core.quit()
