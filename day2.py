@@ -19,6 +19,13 @@ PRACMODE = False
 spos = (0, -300)
 theight = 35
 
+#Method that presents image, asks if they have seen it before, and then asks intrusion and distress questions
+#parameters:
+#win: window to present image
+#mainimg: image to present
+#imgtype: type of image (1 for seen, 9 for new)
+#returns:
+#correct: if imgtype == response (If they answered whether theyve seen it correctly)
 
 def pres_img(win, mainimg, imgtype):
 
@@ -76,6 +83,13 @@ def pres_img(win, mainimg, imgtype):
             
     return correct, rt, intrusionnum, distressnum
 
+#Method that asks how many times they thought of the image
+#parameters:
+#win: window to present image
+#mainimg: image to present
+#returns:
+#intrusionnum: how many times they thought of the image (response to question)
+
 def intrusion_num(win, mainimg):
     #if keys == '1': #deleted this line bc they need to get all three questions regardless of 1 or 9
     #intrusion question
@@ -130,6 +144,13 @@ def intrusion_num(win, mainimg):
             disp.append(visual.TextStim(win, text="Please enter a value to indicate frequency from 1-9" #changed this to say 1-9 instead of 0
                                         , pos=(0, -500), color="red", height=theight,wrapWidth = 1200))
     return intrusionnum     
+
+#Method that asks how distressing they think the image is
+#parameters:
+#win: window to present image
+#mainimg: image to present
+#returns:
+#distressnum: how distressing they think the image is (response to question)
 
 def distress_num(win, mainimg):
     #Add the distress rating question

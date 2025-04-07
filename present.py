@@ -3,6 +3,15 @@ from psychopy.visual.slider import Slider
 import pathlib
 from psychopy.clock import Clock
 
+
+# This file contains the functions used to present images and instructions to the user
+
+# The present_instruction function is used to present an instructions
+# parameters:
+# win: the window to present the instructions to
+# ipath: the path to the image to present
+# delay: the amount of time to wait before allowing the user to press space
+# returns: None
 def present_instruction(win, ipath, delay=2):
     windowsize = win.size
     img = pathlib.Path(ipath).absolute().resolve()
@@ -30,6 +39,7 @@ def present_instruction(win, ipath, delay=2):
     
 
 
+# This function is used to present an image to the user. WE NEVER USE THIS but kept incase it is important.
 
 def present_img(win, ipath, PRACMODE):
 
