@@ -248,7 +248,7 @@ for imgdir in mainimgdirs:
             img = Image.open(os.path.join(dirpath, imgp))
             img = img.resize(imgSize)
             imgp = os.path.splitext(imgp)[0]
-            row =  day1pres.loc[day1pres['name']==imgp][['val', 'pres']].values[0]
+            row =  day1pres.loc[day1pres['imgname']==imgp][['val', 'pres']].values[0]
             val = row[0]
             pres = row[1]
             mainpres.append([img, 1, imgp, val, pres])
@@ -296,7 +296,7 @@ for imgpair in mainpres:
     correct, rt, intrusionnum, distressnum = pres_img(win, mainimg, imgtype)
 
     #Save image response
-    df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2], "val":imgpair[3], "pres":imgpair[4], "correct":correct,"rt":rt, "intrusions":intrusionnum
+    df = pd.concat([df, pd.DataFrame({"participant": partnum, "img":imgpair[2].replace(".jpg", ""), "val":imgpair[3], "pres":imgpair[4], "correct":correct,"rt":rt, "intrusions":intrusionnum
                                       ,"distress":distressnum,"date" : datetime.datetime.now()}, index=[0])], ignore_index=True)
 
 #Save data
